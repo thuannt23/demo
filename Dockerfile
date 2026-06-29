@@ -1,21 +1,20 @@
-# Stage 1 Build
-FROM maven3.9.9-eclipse-temurin-21 AS builder
+# Stage 1: Build
+FROM maven:3.9.9-eclipse-temurin-21 AS builder
 
-WORKDIR app
+WORKDIR /app
 
 COPY pom.xml .
-
-COPY src .src
+COPY src ./src
 
 RUN mvn clean package -DskipTests
 
-# Stage 2 Run
-FROM eclipse-temurin21-jre
+# Stage 2: Run
+FROM eclipse-temurin:21-jre
 
-WORKDIR app
+WORKDIR /app
 
-COPY --from=builder apptarget.jar app.jar
+COPY --from=builder /app/target/*.jar app.jar
 
 EXPOSE 8080
 
-ENTRYPOINT [java,-jar,app.jar]
+ENTRYPOINT ["java", "-jar", "app.jar"]
